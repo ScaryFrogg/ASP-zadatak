@@ -1,0 +1,8 @@
+@{
+    ViewData["Title"] = "Home Page";
+    var posetilac = (Posetilac) TempData["Korisnik"];
+}
+
+<div class="text-center">
+    <h1 class="display-4">@posetilac.username</h1>
+</div>

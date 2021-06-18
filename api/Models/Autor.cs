@@ -11,5 +11,11 @@ namespace api.Models
         {
             return ime + " " + prezime;
         }
+        public Autor(string ime,string prezime){
+            this.ime= ime;
+            this.prezime = prezime;
+        }
+        public Autor(){}
+        
     }
 }

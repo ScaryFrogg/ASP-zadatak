@@ -1,0 +1,4 @@
+- [ ] Prikazi stanje knjige za posetioca i disable gde je 0 
+- [ ] Isto sa rezervacijama za Bibliotekara
+- [ ] Knjige kroz bazu za dodavanje i vracanje ? sta god to znacilo
+- [ ] :otter:

@@ -21,6 +21,7 @@ namespace api.Controllers
 
         public IActionResult Index()
         {
+            Console.WriteLine(repo.sviKorisnici().Count);
             return View();
         }
         [TempData]
@@ -45,6 +46,9 @@ namespace api.Controllers
             Korisnik korisnik = repo.Login(username,password);
             if(korisnik is object){
                 Korisnik = JsonConvert.SerializeObject(korisnik);
+                if(korisnik is Bibliotekar){
+                    return RedirectToAction("Index", "Korisnik");
+                }
                 return RedirectToAction("Posetilac", "Korisnik");
             }
 
@@ -52,7 +56,10 @@ namespace api.Controllers
             ViewBag.Err = "Login";
             return RedirectToAction("Index","Home");
         }
-
+        [HttpGet]
+        public int dummyData(){
+            return repo.dummyData();
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

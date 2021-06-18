@@ -1,9 +1,72 @@
+@using api.Models;
 @{
-    @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers;
     ViewData["Title"] = "Home Page";
-    var posetilac = (Posetilac) TempData["Korisnik"];
+    var posetilac = ViewBag.Korisnik;
+    @* var posetilac = (Posetilac)TempData["Korisnik"]; *@
 }
 
 <div class="text-center">
     <h1 class="display-4">@posetilac.username</h1>
+    @{
+        foreach (var knjiga in ViewBag.Knjige)
+        {
+            <div style=" border: 1px solid black;">
+                <p>@knjiga.naziv</p>
+                <p>@knjiga.autor.PunoIme()</p>
+                @{
+                    if (@knjiga.stanje > 0)
+                    {
+                        <p>Na Stanju: @knjiga.stanje</p>
+                        <button onclick="rezervisi(@knjiga.id)">Rezervisi</button>
+                    }
+                    else
+                    {
+                        <p>Trenutno je nema na stanju</p>
+                    }
+                }
+            </div>
+        }
+    }
 </div>
+<div>
+    <h1 class="display-4">Moje Knjige</h1>
+    <div id="container">
+        @{
+            foreach( var knjiga in posetilac.knjige ){
+                <div style=" border: 1px solid black;">
+                <p>@knjiga.naziv</p>
+                <p>@knjiga.autor.PunoIme()</p>
+                </div>
+            }
+        }
+    </div>
+</div>
+<template>
+    <div style=" border: 1px solid black;">
+        <p></p>
+        <p></p>
+    </div>
+</template>
+
+<script>
+    function rezervisi(id) {
+
+        $.ajax({
+            url: '@this.Url.ActionLink("rezervacija","Korisnik")',
+            type: "post",
+            contentType: 'application/x-www-form-urlencoded',
+            data: {
+                knjigaId: id,
+                korisnikId: @posetilac.id
+            },
+            success: function (result) {
+                console.log(result);
+                connection.invoke("NovaRezervacija", result).catch(function (err) {
+                    return console.error(err.toString());
+                });
+            }
+        });
+    }
+</script>
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/rezervacije.js"></script>

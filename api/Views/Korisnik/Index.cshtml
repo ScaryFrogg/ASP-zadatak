@@ -1,8 +1,51 @@
+@using api.Models
 @{
     ViewData["Title"] = "Home Page";
-    var posetilac = (Posetilac) TempData["Korisnik"];
+    var rezervacije = ViewBag.rezervacije;
+    @* var posetilac = (Posetilac) TempData["Korisnik"]; *@
 }
 
 <div class="text-center">
-    <h1 class="display-4">@posetilac.username</h1>
+
+    <h1 class="display-5">Rezervacije</h1>
+    <div id="container">
+        @{
+            foreach (var rezervacija in rezervacije)
+            {
+                <div>
+                    <p>knjiga: @rezervacija.knjigaId</p>
+                    <p>korisnik: @rezervacija.korisnikId</p>
+                    <button onclick="klik(@rezervacija)">Odobri</button>
+                </div>
+            }
+        }
+    </div>
 </div>
+<template>
+    <div>
+        <p>knjiga: </p>
+        <p>korisnik: </p>
+        <button>Odobri</button>
+    </div>
+</template>
+
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/rezervacije.js"></script>
+<script>
+    function klik(rezervacija) {
+        $.ajax({
+            url: '@this.Url.ActionLink("odobriRezervaciju","Korisnik")',
+            type: "post",
+            contentType: 'application/x-www-form-urlencoded',
+            data: {
+                rezString: rezervacija
+            },
+            success: function (result) {
+                console.log(result);
+                connection.invoke("OdobrenaKnjiga", result).catch(function (err) {
+                    return console.error(err.toString());
+                });
+            }
+        });
+    }
+</script>

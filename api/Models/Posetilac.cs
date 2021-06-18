@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace api.Models
 {
@@ -8,6 +9,9 @@ namespace api.Models
             this.password = password;
             this.username = username;
         }
-        public Knjiga[] knjige {get;set;}
+        public Posetilac(){
+            
+        }
+        public List<Knjiga> knjige {get;set;}
     }
 }

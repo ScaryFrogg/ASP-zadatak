@@ -5907,19 +5907,19 @@
     ]
   },
   "packageFolders": {
-    "/home/vojin/.nuget/packages/": {}
+    "/home/vjn/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/vojin/Workspace/zadatak/api/api.csproj",
+      "projectUniqueName": "/home/vjn/Documents/workspace/ASP-zadatak/api/api.csproj",
       "projectName": "api",
-      "projectPath": "/home/vojin/Workspace/zadatak/api/api.csproj",
-      "packagesPath": "/home/vojin/.nuget/packages/",
-      "outputPath": "/home/vojin/Workspace/zadatak/api/obj/",
+      "projectPath": "/home/vjn/Documents/workspace/ASP-zadatak/api/api.csproj",
+      "packagesPath": "/home/vjn/.nuget/packages/",
+      "outputPath": "/home/vjn/Documents/workspace/ASP-zadatak/api/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/vojin/.nuget/NuGet/NuGet.Config"
+        "/home/vjn/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net5.0"

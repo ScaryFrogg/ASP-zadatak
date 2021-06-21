@@ -1,5 +1,5 @@
 {
-  "FilePath": "/home/vjn/Documents/workspace/ASP-zadatak/api/api.csproj",
+  "FilePath": "/home/vojin/Workspace/zadatak/api/api.csproj",
   "Configuration": {
     "ConfigurationName": "MVC-3.0",
     "LanguageVersion": "5.0",
@@ -15619,48 +15619,48 @@
   "RootNamespace": "api",
   "Documents": [
     {
-      "FilePath": "/home/vjn/Documents/workspace/ASP-zadatak/api/Views/Korisnik/Index.cshtml",
-      "TargetPath": "Views\\Korisnik\\Index.cshtml",
-      "FileKind": "mvc"
-    },
-    {
-      "FilePath": "/home/vjn/Documents/workspace/ASP-zadatak/api/Views/Home/Index.cshtml",
-      "TargetPath": "Views\\Home\\Index.cshtml",
-      "FileKind": "mvc"
-    },
-    {
-      "FilePath": "/home/vjn/Documents/workspace/ASP-zadatak/api/Views/Shared/_ValidationScriptsPartial.cshtml",
+      "FilePath": "/home/vojin/Workspace/zadatak/api/Views/Shared/_ValidationScriptsPartial.cshtml",
       "TargetPath": "Views\\Shared\\_ValidationScriptsPartial.cshtml",
       "FileKind": "mvc"
     },
     {
-      "FilePath": "/home/vjn/Documents/workspace/ASP-zadatak/api/Views/Shared/Error.cshtml",
-      "TargetPath": "Views\\Shared\\Error.cshtml",
-      "FileKind": "mvc"
-    },
-    {
-      "FilePath": "/home/vjn/Documents/workspace/ASP-zadatak/api/Views/_ViewImports.cshtml",
-      "TargetPath": "Views\\_ViewImports.cshtml",
-      "FileKind": "mvc"
-    },
-    {
-      "FilePath": "/home/vjn/Documents/workspace/ASP-zadatak/api/Views/Shared/_Layout.cshtml",
-      "TargetPath": "Views\\Shared\\_Layout.cshtml",
-      "FileKind": "mvc"
-    },
-    {
-      "FilePath": "/home/vjn/Documents/workspace/ASP-zadatak/api/Views/Home/Privacy.cshtml",
-      "TargetPath": "Views\\Home\\Privacy.cshtml",
-      "FileKind": "mvc"
-    },
-    {
-      "FilePath": "/home/vjn/Documents/workspace/ASP-zadatak/api/Views/Korisnik/Posetilac.cshtml",
+      "FilePath": "/home/vojin/Workspace/zadatak/api/Views/Korisnik/Posetilac.cshtml",
       "TargetPath": "Views\\Korisnik\\Posetilac.cshtml",
       "FileKind": "mvc"
     },
     {
-      "FilePath": "/home/vjn/Documents/workspace/ASP-zadatak/api/Views/_ViewStart.cshtml",
+      "FilePath": "/home/vojin/Workspace/zadatak/api/Views/Shared/_Layout.cshtml",
+      "TargetPath": "Views\\Shared\\_Layout.cshtml",
+      "FileKind": "mvc"
+    },
+    {
+      "FilePath": "/home/vojin/Workspace/zadatak/api/Views/Korisnik/NovaKnjiga.cshtml",
+      "TargetPath": "Views\\Korisnik\\NovaKnjiga.cshtml",
+      "FileKind": "mvc"
+    },
+    {
+      "FilePath": "/home/vojin/Workspace/zadatak/api/Views/Shared/Error.cshtml",
+      "TargetPath": "Views\\Shared\\Error.cshtml",
+      "FileKind": "mvc"
+    },
+    {
+      "FilePath": "/home/vojin/Workspace/zadatak/api/Views/_ViewStart.cshtml",
       "TargetPath": "Views\\_ViewStart.cshtml",
+      "FileKind": "mvc"
+    },
+    {
+      "FilePath": "/home/vojin/Workspace/zadatak/api/Views/Korisnik/Index.cshtml",
+      "TargetPath": "Views\\Korisnik\\Index.cshtml",
+      "FileKind": "mvc"
+    },
+    {
+      "FilePath": "/home/vojin/Workspace/zadatak/api/Views/_ViewImports.cshtml",
+      "TargetPath": "Views\\_ViewImports.cshtml",
+      "FileKind": "mvc"
+    },
+    {
+      "FilePath": "/home/vojin/Workspace/zadatak/api/Views/Home/Index.cshtml",
+      "TargetPath": "Views\\Home\\Index.cshtml",
       "FileKind": "mvc"
     }
   ],

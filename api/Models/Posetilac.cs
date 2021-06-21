@@ -1,11 +1,9 @@
-using System;
 using System.Collections.Generic;
-
 namespace api.Models
 {
     public class Posetilac : Korisnik
     {
-        public Posetilac(String username, String password) : base(){
+        public Posetilac(string username, string password) : base(){
             this.password = password;
             this.username = username;
         }

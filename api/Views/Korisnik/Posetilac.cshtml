@@ -1,12 +1,24 @@
 @using api.Models;
+@using System.Linq;
+@using Microsoft.AspNetCore.Http
+@model IEnumerable<Knjiga>
 @{
     ViewData["Title"] = "Home Page";
-    var posetilac = ViewBag.Korisnik;
-    @* var posetilac = (Posetilac)TempData["Korisnik"]; *@
+    var korisnikId = @Context.Session.GetInt32("id");
+    var knjigeIds = Model.Select(x => x.id).ToList();
 }
 
+<div style="display: none;" id="idHolder" data-id=@korisnikId></div>
+<div id="errBox" style="display: none;">
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        Vec ste rezervisali ili iznajmili ovu knjigu.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+</div>
 <div class="text-center">
-    <h1 class="display-4">@posetilac.username</h1>
+    <h1 class="display-4">@Context.Session.GetString("username")</h1>
     @{
         foreach (var knjiga in ViewBag.Knjige)
         {
@@ -14,10 +26,15 @@
                 <p>@knjiga.naziv</p>
                 <p>@knjiga.autor.PunoIme()</p>
                 @{
-                    if (@knjiga.stanje > 0)
+
+                    if (knjigeIds.Contains(@knjiga.id))
+                    {
+                        <p>Vec iznajmljena</p>
+                    }
+                    else if (@knjiga.stanje > 0)
                     {
                         <p>Na Stanju: @knjiga.stanje</p>
-                        <button onclick="rezervisi(@knjiga.id)">Rezervisi</button>
+                        <button onclick="rezervisi(@knjiga.id,this)">Rezervisi</button>
                     }
                     else
                     {
@@ -32,41 +49,71 @@
     <h1 class="display-4">Moje Knjige</h1>
     <div id="container">
         @{
-            foreach( var knjiga in posetilac.knjige ){
-                <div style=" border: 1px solid black;">
-                <p>@knjiga.naziv</p>
-                <p>@knjiga.autor.PunoIme()</p>
+            foreach (var knjiga in Model)
+            {
+                <div data-id=@knjiga.id style=" border: 1px solid black;">
+                    <p>@knjiga.naziv</p>
+                    <p>@knjiga.autor.PunoIme()</p>
+                    <button class="btn">Vrati knjigu</button>
                 </div>
             }
         }
+
     </div>
 </div>
 <template>
     <div style=" border: 1px solid black;">
         <p></p>
         <p></p>
+        <button class="btn">Vrati knjigu</button>
     </div>
 </template>
 
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/posetilac.js"></script>
 <script>
-    function rezervisi(id) {
-
+    document.querySelector("#container").addEventListener("click", (e) => {
+        if (e.target.className == "btn") {
+            const id = e.target.parentElement.getAttribute("data-id")
+            $.ajax({
+                url: '@this.Url.ActionLink("vratiKnjigu","Korisnik")',
+                type: "post",
+                contentType: 'application/x-www-form-urlencoded',
+                data: {
+                    knjigaId: id,
+                    korisnikId: @Context.Session.GetInt32("id").Value
+                },
+                success: function (result) {
+                    if (result == "ok") {
+                        e.target.parentElement.outerHTML = ""
+                    }
+                }
+            });
+        }
+    }, true)
+    function rezervisi(id, btn) {
         $.ajax({
             url: '@this.Url.ActionLink("rezervacija","Korisnik")',
             type: "post",
             contentType: 'application/x-www-form-urlencoded',
             data: {
                 knjigaId: id,
-                korisnikId: @posetilac.id
+                korisnikId: @Context.Session.GetInt32("id").Value
             },
             success: function (result) {
-                console.log(result);
-                connection.invoke("NovaRezervacija", result).catch(function (err) {
-                    return console.error(err.toString());
-                });
+                if (result == "null") {
+                    $("#errBox").css("display", "");
+                } else {
+                    connection.invoke("NovaRezervacija", result)
+                        .then(_ => {
+                            btn.outerHtml = ""
+                        })
+                        .catch(function (err) {
+                            return console.error(err.toString());
+                        });
+                }
+
             }
         });
     }
 </script>
-<script src="~/js/signalr/dist/browser/signalr.js"></script>
-<script src="~/js/rezervacije.js"></script>

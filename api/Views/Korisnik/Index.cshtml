@@ -1,8 +1,9 @@
 @using api.Models
+@* @using Newtonsoft.Json *@
+@model IEnumerable<Rezervacija>
 @{
     ViewData["Title"] = "Home Page";
-    var rezervacije = ViewBag.rezervacije;
-    @* var posetilac = (Posetilac) TempData["Korisnik"]; *@
+
 }
 
 <div class="text-center">
@@ -10,42 +11,42 @@
     <h1 class="display-5">Rezervacije</h1>
     <div id="container">
         @{
-            foreach (var rezervacija in rezervacije)
+            foreach (var rezervacija in Model)
             {
-                <div>
-                    <p>knjiga: @rezervacija.knjigaId</p>
-                    <p>korisnik: @rezervacija.korisnikId</p>
-                    <button onclick="klik(@rezervacija)">Odobri</button>
+                <div class="item" data-id=@rezervacija.id>
+                    <p>knjiga: @rezervacija.knjiga.naziv</p>
+                    <p>korisnik: @rezervacija.korisnik.username</p>
+                    <button class="btn">Odobri</button>
                 </div>
             }
         }
     </div>
 </div>
 <template>
-    <div>
+    <div class="item">
         <p>knjiga: </p>
         <p>korisnik: </p>
-        <button>Odobri</button>
+        <button class="btn">Odobri</button>
     </div>
 </template>
 
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
-<script src="~/js/rezervacije.js"></script>
+<script src="~/js/bibliotekar.js"></script>
 <script>
-    function klik(rezervacija) {
-        $.ajax({
-            url: '@this.Url.ActionLink("odobriRezervaciju","Korisnik")',
-            type: "post",
-            contentType: 'application/x-www-form-urlencoded',
-            data: {
-                rezString: rezervacija
-            },
-            success: function (result) {
-                console.log(result);
-                connection.invoke("OdobrenaKnjiga", result).catch(function (err) {
-                    return console.error(err.toString());
-                });
-            }
-        });
-    }
+    document.querySelector("#container").addEventListener("click", (e) => {
+        if (e.target.className == "btn") {
+            const id = e.target.parentElement.getAttribute("data-id")
+            $.ajax({
+                url: '@this.Url.ActionLink("odobriRezervaciju","Korisnik")',
+                type: "post",
+                contentType: 'application/x-www-form-urlencoded',
+                data: {
+                    rezId: id
+                },
+                success: function (result) {
+                    e.target.parentElement.outerHTML = ""
+                }
+            });
+        }
+    }, true)
 </script>

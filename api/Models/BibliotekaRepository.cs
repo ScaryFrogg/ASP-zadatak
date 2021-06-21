@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 namespace api.Models
 {
     public class BibliotekaRepository
     {
-        private BibliotekaContext context;
+        private static BibliotekaContext context;
         private static BibliotekaRepository instance = new BibliotekaRepository();
         public static BibliotekaRepository Instance
         {
@@ -15,6 +16,33 @@ namespace api.Models
         private BibliotekaRepository()
         {
             context = new BibliotekaContext();
+        }
+
+        //AUTH
+        public Korisnik Register(String username, String password)
+        {
+
+            if (!context.Korisnici.Any(b => b.username == username))
+            {
+                //kreiraj korisnika
+                Posetilac posetilac = new Posetilac(username, password);
+                context.Korisnici.Add(posetilac);
+                context.SaveChanges();
+                return posetilac;
+
+            }
+            //korisnik postoji
+            return null;
+        }
+        public Korisnik Login(String username, String password)
+        {
+            Korisnik korisnik = context.Korisnici.Include("knjige").Where(b => b.username == username && b.password == password).FirstOrDefault();
+            if (korisnik is object)
+            {
+                return korisnik;
+            }
+            //korisnik ne postoji
+            return null;
         }
 
         //SELCT
@@ -36,7 +64,7 @@ namespace api.Models
         }
         public List<Rezervacija> rezervacijeNaCekanju()
         {
-            return context.Rezervacije.Where(r => !r.odobrena).ToList();
+            return context.Rezervacije.Include(r => r.knjiga).Include(r => r.korisnik).Where(r => !r.odobrena).ToList();
         }
         public Autor GetAutor(string imeAutora, string prezimeAutora)
         {
@@ -54,62 +82,46 @@ namespace api.Models
         }
         public List<Knjiga> korisnikoveKnjige(int korinsikId)
         {
-            // var query = $"SELECT * from Knjige WHERE id IN (SELECT knjigaId From Rezervacije WHERE odobrena = false AND korisnikId = {korinsikId})";
-            var query = $"SELECT Knjige.id, Knjige.autorid, Knjige.naziv from Knjige INNER JOIN Rezervacije ON Knjige.id = knjigaId WHERE odobrena = true AND korisnikId = {korinsikId}";
-            Console.WriteLine(query);
-            return context.Knjige.FromSqlRaw(query).ToList();
+            var query = $"SELECT * from Knjige WHERE id IN (SELECT knjigaId From Rezervacije WHERE odobrena = true AND korisnikId = {korinsikId})";
+            return context.Knjige.FromSqlRaw(query).AsNoTracking().Include(k => k.autor).ToList();
         }
 
         //CREATE
-        public bool createKnjiga(Knjiga knjiga)
+        public bool dodajKnjigu(String naziv, Autor autor, int stanje)
         {
-            context.Knjige.Add(knjiga);
-            return context.SaveChanges() == 1;
-        }
-        public Korisnik Register(String username, String password)
-        {
-
-            if (!context.Korisnici.Any(b => b.username == username))
+            try
             {
-                //kreiraj korisnika
-                Posetilac posetilac = new Posetilac(username, password);
-                context.Korisnici.Add(posetilac);
+                var knjiga = new Knjiga(naziv, autor, stanje);
+                context.Knjige.Add(knjiga);
                 context.SaveChanges();
-                return posetilac;
-
+                return true;
             }
-            //korisnik postoji
-            return null;
-        }
-        public Korisnik Login(String username, String password)
-        {
-            Korisnik korisnik = context.Korisnici.Include("knjige").Where(b => b.username == username).FirstOrDefault();
-            if (korisnik is object)
+            catch
             {
-                return korisnik;
+                return false;
             }
-            //korisnik ne postoji
-            return null;
         }
         public Rezervacija createRezervacija(int korisnikId, int knjigaId)
         {
-            if (iznajmiKnjigu(knjigaId) is object)
+            if (context.Rezervacije.AsNoTracking().Where(r => r.korisnik.id == korisnikId && r.knjiga.id == knjigaId).FirstOrDefault() is object)
             {
-                Console.WriteLine("pokusavam rezervaciju");
-                Posetilac posetilac = (Posetilac)context.Korisnici.Include("knjige").Where(k => k.id == korisnikId).FirstOrDefault();
-                Console.WriteLine(posetilac.ToString());
-                Console.WriteLine(posetilac.knjige);
-                Console.WriteLine(posetilac.username);
+                Console.WriteLine("rezervacija vec postoji");
+                return null;
+            }
+            var knjiga = iznajmiKnjigu(knjigaId);
+            if (knjiga is object)
+            {
+                Posetilac posetilac = (Posetilac)context.Korisnici.Where(k => k.id == korisnikId).FirstOrDefault();
                 Rezervacija rezervacija = new Rezervacija();
-                if (posetilac.knjige.Count >= 5)
+                if (korisnikoveKnjige(korisnikId).Count >= 5)
                 {
                     vratiKnjigu(knjigaId);
                     return null;
                 }
                 else
                 {
-                    rezervacija.korisnikId = korisnikId;
-                    rezervacija.knjigaId = knjigaId;
+                    rezervacija.korisnik = posetilac;
+                    rezervacija.knjiga = knjiga;
                     context.Rezervacije.Add(rezervacija);
                     System.Console.WriteLine("Rezervacija kreirana " + rezervacija);
                 }
@@ -122,14 +134,12 @@ namespace api.Models
         {
             context.Korisnici.Add(new Bibliotekar { id = 0, username = "admin@admin.com", password = "admin" });
             context.Korisnici.Add(new Posetilac { id = 1, username = "vojin@vojin.com", password = "vojin", knjige = new List<Knjiga>() });
-            createKnjiga(new Knjiga("Prokleta Avlija", GetAutor("Ivo", "Andric"), 2));
-            createKnjiga(new Knjiga("Koreni", GetAutor("Dobrica", "Cosic"), 3));
-            createKnjiga(new Knjiga("Deobe", GetAutor("Dobrica", "Cosic"), 1));
+            context.Knjige.Add(new Knjiga("Prokleta Avlija", GetAutor("Ivo", "Andric"), 2));
+            context.Knjige.Add(new Knjiga("Koreni", GetAutor("Dobrica", "Cosic"), 3));
+            context.Knjige.Add(new Knjiga("Deobe", GetAutor("Dobrica", "Cosic"), 1));
             return context.SaveChanges();
         }
-
         //UPDATE
-
         public Knjiga iznajmiKnjigu(int knjigaId)
         {
             var knjiga = getKnjigaByID(knjigaId);
@@ -151,26 +161,29 @@ namespace api.Models
             }
             return null;
         }
-
-        public Knjiga dodajKnjigu(String naziv, Autor autor, int stanje)
+        public Rezervacija odobriRezervaciju(int rezId)
         {
-            var knjiga = new Knjiga(naziv, autor, stanje);
-            context.Knjige.Add(knjiga);
-            context.SaveChanges();
-            return knjiga;
-        }
-
-        public Rezervacija odobriRezervaciju(Rezervacija rezervacija)
-        {
+            var rezervacija = context.Rezervacije.Include(r => r.knjiga).Include(r => r.korisnik).Where(r => r.id == rezId).FirstOrDefault();
             rezervacija.odobrena = true;
             rezervacija.istek = DateTime.Today.AddDays(14).ToString();
-            var korisnik = (Posetilac)context.Korisnici.Where(k => k.id == rezervacija.korisnikId).FirstOrDefault();
-            korisnik.knjige.Add(getKnjigaByID(rezervacija.knjigaId));
             context.SaveChanges();
-            System.Console.WriteLine("Rezervacija istice " + rezervacija.istek);
             return rezervacija;
         }
+        //DELETE
+        public string izbrisiRezervaciju(int knjigaId, int korisnikId)
+        {
+            try
+            {
+                var rezervacija = context.Rezervacije.Where(r => r.knjiga.id == knjigaId && r.korisnik.id == korisnikId).FirstOrDefault();
+                context.Remove(rezervacija);
+                vratiKnjigu(knjigaId);
+                context.SaveChanges();
+                return "ok";
+            }
+            catch
+            {
+                return "err";
+            }
+        }
     }
-
-
 }

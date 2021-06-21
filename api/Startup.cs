@@ -23,9 +23,17 @@ namespace api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews().AddSessionStateTempDataProvider(); 
-            services.AddSession();
             services.AddSignalR();
+
+            services.AddDistributedMemoryCache();
+
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromSeconds(60);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+            services.AddControllersWithViews().AddSessionStateTempDataProvider();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

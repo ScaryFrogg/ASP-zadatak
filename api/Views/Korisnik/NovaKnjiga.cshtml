@@ -1,0 +1,47 @@
+@{
+    ViewData["Title"] = "Nova Knjiga";
+}
+
+<div>
+    @if (TempData["Err"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Err"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+    else if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+    <h1 class="display-4">Dodaj novu knjigu</h1>
+    <hr />
+    <div class="container">
+        <form method="post">
+            <h5 class="display-5">Naziv</h5>
+            <div class="form-group">
+                <input required type="text" class="form-control" name="naziv" placeholder="Naziv">
+            </div>
+            <h5 class="display-5">Autor</h5>
+            <div class="form-group">
+                <input required type="text" class="form-control" name="imeAutora" placeholder="Ime">
+                <input required type="text" class="form-control" name="prezimeAutora" placeholder="Prezime">
+            </div>
+
+            <h5 class="display-5">Stanje</h5>
+            <div class="form-group">
+                <input required type="number" class="form-control" name="stanje" placeholder="Stanje">
+            </div>
+            <button asp-controller="Korisnik" asp-action="NovaKnjiga" class="btn btn-primary">Dodaj</button>
+        </form>
+    </div>
+
+
+</div>

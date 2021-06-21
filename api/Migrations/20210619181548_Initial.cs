@@ -2,7 +2,7 @@
 
 namespace api.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -41,8 +41,8 @@ namespace api.Migrations
                 {
                     id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    knjigaId = table.Column<string>(type: "TEXT", nullable: true),
-                    korisnikId = table.Column<string>(type: "TEXT", nullable: true),
+                    knjigaId = table.Column<int>(type: "INTEGER", nullable: false),
+                    korisnikId = table.Column<int>(type: "INTEGER", nullable: false),
                     odobrena = table.Column<bool>(type: "INTEGER", nullable: false),
                     istek = table.Column<string>(type: "TEXT", nullable: true)
                 },
@@ -59,8 +59,7 @@ namespace api.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     naziv = table.Column<string>(type: "TEXT", nullable: true),
                     autorid = table.Column<int>(type: "INTEGER", nullable: true),
-                    stanje = table.Column<int>(type: "INTEGER", nullable: false),
-                    Posetilacid = table.Column<int>(type: "INTEGER", nullable: true)
+                    stanje = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -71,38 +70,59 @@ namespace api.Migrations
                         principalTable: "Autori",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "KnjigaPosetilac",
+                columns: table => new
+                {
+                    knjigeid = table.Column<int>(type: "INTEGER", nullable: false),
+                    korisniciid = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_KnjigaPosetilac", x => new { x.knjigeid, x.korisniciid });
                     table.ForeignKey(
-                        name: "FK_Knjige_Korisnici_Posetilacid",
-                        column: x => x.Posetilacid,
+                        name: "FK_KnjigaPosetilac_Knjige_knjigeid",
+                        column: x => x.knjigeid,
+                        principalTable: "Knjige",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_KnjigaPosetilac_Korisnici_korisniciid",
+                        column: x => x.korisniciid,
                         principalTable: "Korisnici",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KnjigaPosetilac_korisniciid",
+                table: "KnjigaPosetilac",
+                column: "korisniciid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Knjige_autorid",
                 table: "Knjige",
                 column: "autorid");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Knjige_Posetilacid",
-                table: "Knjige",
-                column: "Posetilacid");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Knjige");
+                name: "KnjigaPosetilac");
 
             migrationBuilder.DropTable(
                 name: "Rezervacije");
 
             migrationBuilder.DropTable(
-                name: "Autori");
+                name: "Knjige");
 
             migrationBuilder.DropTable(
                 name: "Korisnici");
+
+            migrationBuilder.DropTable(
+                name: "Autori");
         }
     }
 }

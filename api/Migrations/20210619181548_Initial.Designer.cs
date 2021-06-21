@@ -9,14 +9,29 @@ using api.Models;
 namespace api.Migrations
 {
     [DbContext(typeof(BibliotekaContext))]
-    [Migration("20210612102939_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20210619181548_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "5.0.7");
+
+            modelBuilder.Entity("KnjigaPosetilac", b =>
+                {
+                    b.Property<int>("knjigeid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("korisniciid")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("knjigeid", "korisniciid");
+
+                    b.HasIndex("korisniciid");
+
+                    b.ToTable("KnjigaPosetilac");
+                });
 
             modelBuilder.Entity("api.Models.Autor", b =>
                 {
@@ -41,9 +56,6 @@ namespace api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("Posetilacid")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int?>("autorid")
                         .HasColumnType("INTEGER");
 
@@ -54,8 +66,6 @@ namespace api.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("id");
-
-                    b.HasIndex("Posetilacid");
 
                     b.HasIndex("autorid");
 
@@ -94,11 +104,11 @@ namespace api.Migrations
                     b.Property<string>("istek")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("knjigaId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("knjigaId")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<string>("korisnikId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("korisnikId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("odobrena")
                         .HasColumnType("INTEGER");
@@ -122,22 +132,28 @@ namespace api.Migrations
                     b.HasDiscriminator().HasValue("Posetilac");
                 });
 
+            modelBuilder.Entity("KnjigaPosetilac", b =>
+                {
+                    b.HasOne("api.Models.Knjiga", null)
+                        .WithMany()
+                        .HasForeignKey("knjigeid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("api.Models.Posetilac", null)
+                        .WithMany()
+                        .HasForeignKey("korisniciid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("api.Models.Knjiga", b =>
                 {
-                    b.HasOne("api.Models.Posetilac", null)
-                        .WithMany("knjige")
-                        .HasForeignKey("Posetilacid");
-
                     b.HasOne("api.Models.Autor", "autor")
                         .WithMany()
                         .HasForeignKey("autorid");
 
                     b.Navigation("autor");
-                });
-
-            modelBuilder.Entity("api.Models.Posetilac", b =>
-                {
-                    b.Navigation("knjige");
                 });
 #pragma warning restore 612, 618
         }

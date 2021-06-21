@@ -2,3 +2,6 @@
 - [ ] Isto sa rezervacijama za Bibliotekara
 - [ ] Knjige kroz bazu za dodavanje i vracanje ? sta god to znacilo
 - [ ] :otter:
+- [ ] Proveri da li register radi lepo sad
+- [ ] Nova knjiga Forma
+- [ ] Vracanje knjiga
